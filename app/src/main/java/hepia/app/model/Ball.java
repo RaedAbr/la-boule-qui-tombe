@@ -4,17 +4,14 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.RectF;
 
-/**
- * Created by raed on 30.11.17.
- */
-
 public class Ball {
+    public static final int RAY = 10;
+
     private Point position;
     private double verticalSpeed;
     private double horizontalSpeed;
     private final double MAX_SPEED = 1;
-    private Color color;
-    private double ray;
+    private int color = Color.GREEN;
     private RectF container;
 
     public void moveDown(int dy) {

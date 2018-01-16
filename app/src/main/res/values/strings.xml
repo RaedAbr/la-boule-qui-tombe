@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tp4</string>
+    <string name="app_name">La boule qui tombe</string>
     <string name="new_game">New game</string>
     <string name="hight_score">Hight Score</string>
     <string name="difficulty">Difficulty</string>
