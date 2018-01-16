@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">tp4</string>
+    <string name="new_game">New game</string>
+    <string name="hight_score">Hight Score</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="about">About</string>
+    <string name="easy">Easy</string>
+    <string name="medium">Medium</string>
+    <string name="hard">Hard</string>
+    <string name="start">Start</string>
+</resources>
