@@ -55,43 +55,49 @@ public class GameTimer {
                     public void run() {
                         timeValueSeconds--;
                         activity.getView().setTime(timeValueSeconds);
-                        if (timeValueSeconds == 0) {
-                            stopTimerTask();
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                    activity);
-
-                            // set title
-                            alertDialogBuilder.setTitle("Your Title");
-
-                            // set dialog message
-                            alertDialogBuilder
-                                    .setMessage("Click yes to exit!")
-                                    .setCancelable(false)
-                                    .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog,int id) {
-                                            // if this button is clicked, close
-                                            // current activity
-//                                            MainActivity.this.finish();
-                                        }
-                                    })
-                                    .setNegativeButton("No",new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog,int id) {
-                                            // if this button is clicked, just close
-                                            // the dialog box and do nothing
-                                            dialog.cancel();
-                                        }
-                                    });
-
-                            // create alert dialog
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-
-                            // show it
-                            alertDialog.show();
+                        if (timeValueSeconds <= 0) {
+                            displayDialog("Play again?");
                         }
                     }
                 });
             }
         };
+    }
+
+    private void displayDialog(String msg) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                activity);
+
+        // set title
+        alertDialogBuilder.setTitle("Time Over");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close
+                        // current activity
+//                                            MainActivity.this.finish();
+                        activity.resetGame();
+                    }
+                })
+                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        activity.finish();
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+        activity.pauseGame();
     }
 
     public int getTimeValueSeconds() {
@@ -100,5 +106,15 @@ public class GameTimer {
 
     public void setTimeValueSeconds(int timeValueSeconds) {
         this.timeValueSeconds = timeValueSeconds;
+    }
+
+    public void addBonusToTime(int value) {
+        timeValueSeconds += value;
+    }
+
+    public void substractFromTime(int value) {
+        timeValueSeconds -= value;
+        if (timeValueSeconds < 0)
+            timeValueSeconds = 0;
     }
 }

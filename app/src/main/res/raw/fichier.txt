@@ -5,23 +5,23 @@
 *ppppppp   pppppppppp    pppp*
 *                            *
 *                            *
-*                            *
+*       b              b     *
 *   ppppppppppppp   pppppp   *
 *       w                    *
 *       w                    *
-*       w                    *
+*       w             m      *
 *  ppppppppppp   pppppppppppp*
 *                            *
 *                            *
-*                            *
+*             m              *
 *pppppp   pppppppppppp   pp  *
 *                 w          *
 *                 w          *
-*                 w          *
+*                 w     m    *
 *   pppppppppp  ppppppppppp  *
 *                            *
 *                            *
-*                            *
+*              b             *
 *     ppppp   ppp   ppppp    *
 *              w             *
 *              w             *

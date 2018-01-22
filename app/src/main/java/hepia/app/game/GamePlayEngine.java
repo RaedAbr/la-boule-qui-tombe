@@ -21,7 +21,9 @@ import hepia.app.R;
 import hepia.app.activities.GamePlayActivity;
 import hepia.app.model.Ball;
 import hepia.app.model.Block;
+import hepia.app.model.BonusBlock;
 import hepia.app.model.EmptyScoreBlock;
+import hepia.app.model.MalusBlock;
 import hepia.app.model.ScoreBlock;
 
 public class GamePlayEngine {
@@ -32,7 +34,7 @@ public class GamePlayEngine {
     private List<Integer> scoreValues;
     private Ball ball;
     private int earnedPoints = 0;
-    private Activity gamePlayActivity;
+    private GamePlayActivity gamePlayActivity;
     private Random r = new Random();
 
     public GamePlayEngine(final GamePlayActivity gamePlayActivity) {
@@ -42,8 +44,8 @@ public class GamePlayEngine {
         this.gamePlayActivity = gamePlayActivity;
 
         sensorEventListener = new SensorEventListener() {
-            private Activity activity;
-            private SensorEventListener init(Activity activity) {
+            private GamePlayActivity activity;
+            private SensorEventListener init(GamePlayActivity activity) {
                 this.activity = activity;
                 return this;
             }
@@ -67,6 +69,14 @@ public class GamePlayEngine {
                                 detectCollision = true;
                                 blockInCollision = block;
                                 break;
+                            } else if (block.getType() == Block.Type.BONUS) {
+                                activity.getGameTimer().addBonusToTime(((BonusBlock)block).getValue());
+                                detectCollision = true;
+                                blockInCollision = block;
+                            } else if (block.getType() == Block.Type.MALUS) {
+                                activity.getGameTimer().substractFromTime(((MalusBlock)block).getValue());
+                                detectCollision = true;
+                                blockInCollision = block;
                             }
                         }
                     }
@@ -74,12 +84,19 @@ public class GamePlayEngine {
                         if (blockInCollision.getType() == Block.Type.SCORE_BLOCK
                                 || blockInCollision.getType() == Block.Type.EMPTY_SCORE_BLOCK) {
                             earnedPoints = ((ScoreBlock)blockInCollision).getValue();
-                            gamePlayActivity.getView().addEarnedPoints(earnedPoints);
+                            activity.getView().addEarnedPoints(earnedPoints);
                             ball.reset();
                             updateScoreBlocks();
-                            gamePlayActivity.getView().setScores(scoreValues);
-                        } else {
-                            ball.manageCollision(/*detectCollision, */blockInCollision, inter2);
+                            activity.getView().setScores(scoreValues);
+                        } else if (blockInCollision.getType() == Block.Type.MALUS
+                                || blockInCollision.getType() == Block.Type.BONUS) {
+                            synchronized (blocks) {
+                                blocks.remove(blockInCollision);
+                                gamePlayActivity.getView().setBlocks(blocks);
+                            }
+                        }
+                        else {
+                            ball.manageCollision(blockInCollision, inter2);
                         }
                     } else {
                         ball.updateXY(y, blocks);
@@ -108,7 +125,12 @@ public class GamePlayEngine {
 
     // Remet à zéro l'emplacement de la boule
     public void reset() {
+        earnedPoints = 0;
+        gamePlayActivity.getView().resetEaernedPoints();
         ball.reset();
+        updateScoreBlocks();
+        gamePlayActivity.getView().setScores(scoreValues);
+        resume();
     }
 
     // Arr�te le capteur
@@ -151,6 +173,12 @@ public class GamePlayEngine {
                         blocks.add(new ScoreBlock(x, y, rayon, scoreValues.get(i / 2)));
                         i++;
                     default:
+                        break;
+                    case 'm':
+                        blocks.add(new MalusBlock(x, y, rayon));
+                        break;
+                    case 'b':
+                        blocks.add(new BonusBlock(x, y, rayon));
                         break;
                 }
                 x++;

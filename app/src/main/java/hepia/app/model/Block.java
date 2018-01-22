@@ -3,7 +3,7 @@ package hepia.app.model;
 import android.graphics.RectF;
 
 public class Block {
-    public enum Type {BORDER, H_OBSTACLE, V_OBSTACLE, SCORE_BLOCK, EMPTY_SCORE_BLOCK, NULL}
+    public enum Type {BORDER, H_OBSTACLE, V_OBSTACLE, SCORE_BLOCK, EMPTY_SCORE_BLOCK, MALUS, BONUS, NULL}
 
     private float size = 0f;
 

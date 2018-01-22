@@ -2,6 +2,8 @@ package hepia.app.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,7 +12,7 @@ import android.view.SurfaceHolder;
 
 import java.util.List;
 
-import hepia.app.activities.GamePlayActivity;
+import hepia.app.R;
 import hepia.app.model.Ball;
 import hepia.app.model.Block;
 import hepia.app.model.ScoreBlock;
@@ -25,6 +27,8 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
     private List<Integer> scores;
     private Ball ball;
     private int earnedPoints = 0;
+
+    private Bitmap resumeImage = BitmapFactory.decodeResource(getResources(), R.mipmap.pause);
 
     public void setTime(int timeValueSeconds) {
         this.timeValueSeconds = timeValueSeconds;
@@ -56,36 +60,45 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
         if (blocks != null) {
             size = blocks.get(0).getRectangle().width();
             // Dessiner tous les blocs du labyrinthe
-            for (Block b : blocks) {
-                switch (b.getType()) {
-                    case H_OBSTACLE:
-                        paint.setColor(Color.BLUE);
-                        canvas.drawRect(b.getRectangle(), paint);
-                        break;
-                    case V_OBSTACLE:
-                        paint.setColor(Color.BLUE);
-                        canvas.drawRect(b.getRectangle(), paint);
-                        break;
-//                    case ARRIVAL:
-//                        paint.setColor(Color.RED);
-//                        canvas.drawRect(b.getRectangle(), paint);
-//                        break;
-                    case BORDER:
-                        paint.setColor(Color.BLACK);
-                        canvas.drawRect(b.getRectangle(), paint);
-                        break;
-                    case SCORE_BLOCK:
-                    case EMPTY_SCORE_BLOCK:
-                        paint.setColor(Color.RED);
-                        paint.setTextSize(20);
-                        canvas.drawText(Integer.toString(((ScoreBlock)b).getValue()),
-                                b.getRectangle().centerX(), b.getRectangle().centerY(), paint);
-                        break;
+            synchronized (blocks) {
+                for (Block b : blocks) {
+                    switch (b.getType()) {
+                        case H_OBSTACLE:
+                            paint.setColor(Color.BLUE);
+                            canvas.drawRect(b.getRectangle(), paint);
+                            break;
+                        case V_OBSTACLE:
+                            paint.setColor(Color.BLUE);
+                            canvas.drawRect(b.getRectangle(), paint);
+                            break;
+                        //                    case ARRIVAL:
+                        //                        paint.setColor(Color.RED);
+                        //                        canvas.drawRect(b.getRectangle(), paint);
+                        //                        break;
+                        case BORDER:
+                            paint.setColor(Color.BLACK);
+                            canvas.drawRect(b.getRectangle(), paint);
+                            break;
+                        case SCORE_BLOCK:
+                        case EMPTY_SCORE_BLOCK:
+                            paint.setColor(Color.RED);
+                            paint.setTextSize(20);
+                            canvas.drawText(Integer.toString(((ScoreBlock) b).getValue()), b.getRectangle().centerX(), b.getRectangle().centerY(), paint);
+                            break;
+                        case MALUS:
+                            paint.setColor(Color.RED);
+                            canvas.drawRect(b.getRectangle(), paint);
+                            break;
+                        case BONUS:
+                            paint.setColor(Color.GREEN);
+                            canvas.drawRect(b.getRectangle(), paint);
+                            break;
+                    }
                 }
             }
             if (scores != null) {
                 int i = 0;
-                for (int sc: scores) {
+                for (int sc : scores) {
                     paint.setTextSize(40);
                     canvas.drawText(Integer.toString(sc), size * 5 + (6 * i * size), size * 29 - 5, paint);
                     i++;
@@ -93,13 +106,13 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
             }
         }
         // Dessiner la boule
-        if(ball != null) {
+        if (ball != null) {
 //            paint.setColor(Color.GRAY);
 //            canvas.drawRect(ball.getContainer(), paint);
             paint.setColor(ball.getColor());
             canvas.drawCircle(ball.getPosY(), ball.getPosX(), ball.getRay(), paint);
         }
-        float posY = size * BLOCKINLINE+ size * 3;
+        float posY = size * BLOCKINLINE + size * 3;
         paint.setTextSize(50);
         canvas.drawText("Score: " + Integer.toString(earnedPoints), 20, posY, paint);
         int minutes = timeValueSeconds / 60;
@@ -110,9 +123,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        drawingThread = new DrawingThread();
-        drawingThread.keepDrawing = true;
-        drawingThread.start();
+        restartDraw();
         // Quand on crée la boule, on lui indique les coordonn�es de l'écran
         if(ball != null ) {
             int blockSize = BLOCKINLINE * ball.getRay() * 2;
@@ -127,14 +138,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        drawingThread.keepDrawing = false;
-        boolean retry = true;
-        while (retry) {
-            try {
-                drawingThread.join();
-                retry = false;
-            } catch (InterruptedException ignored) {}
-        }
+        stop();
     }
 
     public void setBlocks(List<Block> blocks) {
@@ -151,10 +155,27 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     public void stop() {
         drawingThread.keepDrawing = false;
+        boolean retry = true;
+        while (retry) {
+            try {
+                drawingThread.join();
+                retry = false;
+            } catch (InterruptedException ignored) {}
+        }
     }
 
     public void resume() {
         drawingThread.keepDrawing = true;
+    }
+
+    public void restartDraw() {
+        drawingThread = new DrawingThread();
+        drawingThread.keepDrawing = true;
+        drawingThread.start();
+    }
+
+    public void resetEaernedPoints() {
+        this.earnedPoints = 0;
     }
 
     private class DrawingThread extends Thread {
