@@ -3,9 +3,13 @@ package hepia.app.model;
 import android.graphics.RectF;
 
 public class Block {
-    public enum Type { TROU, DEPART, ARRIVEE }
+    public enum Type {BORDER, H_OBSTACLE, V_OBSTACLE, SCORE_BLOCK, EMPTY_SCORE_BLOCK, NULL}
 
     private float size = 0f;
+
+    public void setType(Type type) {
+        this.type = type;
+    }
 
     private Type type = null;
     private RectF rectangle = null;

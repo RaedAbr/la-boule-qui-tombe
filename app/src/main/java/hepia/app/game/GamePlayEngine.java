@@ -1,74 +1,114 @@
 package hepia.app.game;
 
+import android.app.Activity;
 import android.app.Service;
 import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+import hepia.app.R;
 import hepia.app.activities.GamePlayActivity;
+import hepia.app.model.Ball;
 import hepia.app.model.Block;
+import hepia.app.model.EmptyScoreBlock;
+import hepia.app.model.ScoreBlock;
 
 public class GamePlayEngine {
     private SensorManager sensorManager;
     private Sensor accelerometre;
     private SensorEventListener sensorEventListener;
     private List<Block> blocks;
+    private List<Integer> scoreValues;
+    private Ball ball;
+    private int earnedPoints = 0;
+    private Activity gamePlayActivity;
+    private Random r = new Random();
 
-    public GamePlayEngine(GamePlayActivity activity) {
-        sensorManager = (SensorManager) activity.getBaseContext().getSystemService(Service.SENSOR_SERVICE);
+    public GamePlayEngine(final GamePlayActivity gamePlayActivity) {
+        sensorManager = (SensorManager) gamePlayActivity.getBaseContext().getSystemService(Service.SENSOR_SERVICE);
         assert sensorManager != null;
         accelerometre = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.gamePlayActivity = gamePlayActivity;
 
         sensorEventListener = new SensorEventListener() {
+            private Activity activity;
+            private SensorEventListener init(Activity activity) {
+                this.activity = activity;
+                return this;
+            }
 
             @Override
             public void onSensorChanged(SensorEvent pEvent) {
-//                float x = pEvent.values[0];
-//                float y = pEvent.values[1];
+                float y = pEvent.values[0];
 
-//            if(mBoule != null) {
-                // On met � jour les coordonn�es de la boule
-//                RectF hitBox = mBoule.putXAndY(x, y);
-
-                // Pour tous les blocs du labyrinthe
-//                for(Block block : blocks) {
-                // On cr�e un nouveau rectangle pour ne pas modifier celui du Block
-//                    RectF inter = new RectF(block.getRectangle());
-//					if(inter.intersect(hitBox)) {
-//						// On agit diff�rement en fonction du type de Block
-//						switch(block.getType()) {
-//						case TROU:
-//							mActivity.showDialog(LabyrintheActivity.DEFEAT_DIALOG);
-//							break;
-//
-//						case DEPART:
-//							break;
-//
-//						case ARRIVEE:
-//							mActivity.showDialog(LabyrintheActivity.VICTORY_DIALOG);
-//							break;
-//						}
-//						break;
-//					}
-//                }
-//            }
+                if (ball != null) {
+                    RectF inter1 = new RectF(ball.getContainer());
+                    RectF inter2 = null;
+                    boolean detectCollision = false;
+                    Block blockInCollision = null;
+                    for (Block block : blocks) {
+                        inter2 = new RectF(block.getRectangle());
+                        if (inter1.intersect(inter2)) {
+                            if (block.getType() == Block.Type.H_OBSTACLE
+                                    || block.getType() == Block.Type.V_OBSTACLE
+                                    || block.getType() == Block.Type.SCORE_BLOCK
+                                    || block.getType() == Block.Type.EMPTY_SCORE_BLOCK) {
+                                detectCollision = true;
+                                blockInCollision = block;
+                                break;
+                            }
+                        }
+                    }
+                    if (detectCollision) {
+                        if (blockInCollision.getType() == Block.Type.SCORE_BLOCK
+                                || blockInCollision.getType() == Block.Type.EMPTY_SCORE_BLOCK) {
+                            earnedPoints = ((ScoreBlock)blockInCollision).getValue();
+                            gamePlayActivity.getView().addEarnedPoints(earnedPoints);
+                            ball.reset();
+                            updateScoreBlocks();
+                            gamePlayActivity.getView().setScores(scoreValues);
+                        } else {
+                            ball.manageCollision(/*detectCollision, */blockInCollision, inter2);
+                        }
+                    } else {
+                        ball.updateXY(y, blocks);
+                    }
+                    ball.updateContainerPos();
+                }
             }
 
             @Override
             public void onAccuracyChanged(Sensor pSensor, int pAccuracy) {
 
             }
-        };
+        }.init(gamePlayActivity);
     }
 
-    // Remet � z�ro l'emplacement de la boule
+    private void updateScoreBlocks() {
+        buildScores();
+        int i = 0;
+        for (Block sb: blocks) {
+            if (sb.getType() == Block.Type.SCORE_BLOCK) {
+                ((ScoreBlock)sb).setValue(scoreValues.get(i / 2));
+                i++;
+            }
+        }
+    }
+
+    // Remet à zéro l'emplacement de la boule
     public void reset() {
-//        mBoule.reset();
+        ball.reset();
     }
 
     // Arr�te le capteur
@@ -82,140 +122,90 @@ public class GamePlayEngine {
     }
 
     // Construit le labyrinthe
-    public List<Block> buildLabyrinthe(int rayon) {
-        blocks = new ArrayList<Block>();
-        blocks.add(new Block(Block.Type.TROU, 0, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 1, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 2, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 3, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 4, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 6, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 7, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 10, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 11, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 12, rayon));
-        blocks.add(new Block(Block.Type.TROU, 0, 13, rayon));
+    public List<Block> buildMap(int rayon) {
+        buildScores();
 
-        blocks.add(new Block(Block.Type.TROU, 1, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 1, 13, rayon));
+        blocks = new ArrayList<>();
+        List<String> map = readMap(this.gamePlayActivity);
+        int y = 0;
+        for (String str: map) {
+            int x = 0;
+            int i = 0;
+            for (char c: str.toCharArray()) {
+                switch (c) {
+                    case '*':
+                        blocks.add(new Block(Block.Type.BORDER, x, y, rayon));
+                        break;
+                    case 'p':
+                        blocks.add(new Block(Block.Type.H_OBSTACLE, x, y, rayon));
+                        break;
+                    case 'w':
+                        blocks.add(new Block(Block.Type.V_OBSTACLE, x, y, rayon));
+                        break;
+                    case 'x':
+                        blocks.add(new EmptyScoreBlock(x, y, rayon));
+                        break;
+                    case 's':
+//                        int val = i / 2;
+//                        if (i % 2 = 1)
+                        blocks.add(new ScoreBlock(x, y, rayon, scoreValues.get(i / 2)));
+                        i++;
+                    default:
+                        break;
+                }
+                x++;
+            }
+            y++;
+        }
+//
+        // initial ball container
+        Block block = new Block(Block.Type.NULL, 2, 2, rayon);
+        ball.setInitialContainer(new RectF(block.getRectangle()));
 
-        blocks.add(new Block(Block.Type.TROU, 2, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 2, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 3, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 3, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 4, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 1, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 2, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 3, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 4, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 6, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 7, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 10, rayon));
-        blocks.add(new Block(Block.Type.TROU, 4, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 5, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 5, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 6, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 6, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 7, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 1, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 2, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 6, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 10, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 11, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 12, rayon));
-        blocks.add(new Block(Block.Type.TROU, 7, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 8, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 8, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 8, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 8, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 9, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 9, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 9, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 9, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 10, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 10, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 10, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 10, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 11, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 11, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 11, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 11, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 12, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 1, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 2, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 3, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 4, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 12, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 13, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 13, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 13, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 14, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 14, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 14, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 15, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 15, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 15, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 16, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 4, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 6, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 7, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 16, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 17, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 17, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 18, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 18, 13, rayon));
-
-        blocks.add(new Block(Block.Type.TROU, 19, 0, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 1, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 2, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 3, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 4, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 5, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 6, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 7, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 8, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 9, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 10, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 11, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 12, rayon));
-        blocks.add(new Block(Block.Type.TROU, 19, 13, rayon));
-
-        Block b = new Block(Block.Type.DEPART, 2, 2, rayon);
-//        mBoule.setInitialRectangle(new RectF(b.getRectangle()));
-        blocks.add(b);
-
-        blocks.add(new Block(Block.Type.ARRIVEE, 8, 11, rayon));
+//        blocks.add(block);
+//
+//        blocks.add(new Block(Block.Type.ARRIVAL, 8, 11, rayon));
 
         return blocks;
+    }
+
+    public void buildScores() {
+        scoreValues = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            scoreValues.add(r.nextInt(10) * 10);
+        }
+    }
+
+    private List<String> readMap(Activity activity) {
+        List<String> map = new ArrayList<>();
+        InputStream inputStream = activity.getResources().openRawResource(R.raw.fichier);
+        try {
+            if (inputStream != null) {
+                // open a reader on the inputStream
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                // String used to store the lines
+                String str;
+
+                // Read the file
+                while ((str = reader.readLine()) != null) {
+                    map.add(str);
+                }
+                // Close streams
+                reader.close();
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            Toast.makeText(activity, "FileNotFoundException", Toast.LENGTH_LONG).show();
+        }
+        return map;
+    }
+
+    public void setBall(Ball ball) {
+        this.ball = ball;
+    }
+
+    public List<Integer> getScoreValues() {
+        return scoreValues;
     }
 }

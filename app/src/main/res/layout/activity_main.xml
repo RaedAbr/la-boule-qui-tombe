@@ -24,6 +24,10 @@
             android:layout_height="wrap_content"
             android:text="@string/hight_score"
             android:onClick="onClickHiScoreButton"/>
+        <TextView
+            android:id="@+id/file_test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
