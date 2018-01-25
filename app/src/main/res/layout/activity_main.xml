@@ -14,6 +14,16 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/please_put_your_name"
+            android:labelFor="@+id/user_name"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/user_name"
+            android:inputType="textPersonName" />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,10 +34,6 @@
             android:layout_height="wrap_content"
             android:text="@string/hight_score"
             android:onClick="onClickHiScoreButton"/>
-        <TextView
-            android:id="@+id/file_test"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

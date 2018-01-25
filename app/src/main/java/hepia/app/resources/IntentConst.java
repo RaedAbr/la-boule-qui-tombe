@@ -1,5 +1,7 @@
 package hepia.app.resources;
 
 public enum IntentConst {
-    DIFFICULTY
+    DIFFICULTY,
+    USER_NAME,
+    HIDHT_SCORE
 }

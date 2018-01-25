@@ -1,17 +1,27 @@
 package hepia.app.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
+import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import hepia.app.R;
 import hepia.app.game.GamePlayEngine;
@@ -34,6 +44,11 @@ public class GamePlayActivity extends AppCompatActivity {
 
     private GamePlayView view;
     private GameDifficulty gameDifficulty;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
 
     public GameTimer getGameTimer() {
         return gameTimer;
@@ -47,6 +62,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         view = new GamePlayView(this);
         setContentView(view);
+
         this.engine = new GamePlayEngine(this);
         // Calcul de la taille d'un bloc par rapport à 30 blocs par ligne
         Display display = getWindowManager().getDefaultDisplay();
@@ -58,7 +74,11 @@ public class GamePlayActivity extends AppCompatActivity {
         // récupérer le niveau de jeu de l'avtivité précédente
         Intent intent = getIntent();
         int retreivedValue = intent.getIntExtra(IntentConst.DIFFICULTY.name(), 0);
+        userName = intent.getStringExtra(IntentConst.USER_NAME.name());
         gameDifficulty = GameDifficulty.updateValue(retreivedValue);
+
+        view.setUserName(userName);
+
         Ball ball = new Ball(size / 2, gameDifficulty);
         view.setBall(ball);
         engine.setBall(ball);
@@ -188,5 +208,36 @@ public class GamePlayActivity extends AppCompatActivity {
         engine.reset();
         view.restartDraw();
         gameTimer.startTimer();
+    }
+
+    public void saveScore() {
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("hight_score", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        String highScore = sharedPref.getString(IntentConst.HIDHT_SCORE.name(), "");
+        if (!highScore.equals("")) {
+            highScore = highScore.substring(highScore.indexOf('\n') + 1);
+            highScore = highScore.substring(highScore.indexOf('\n'));
+            highScore = highScore.substring(highScore.indexOf('\n') + 1, highScore.indexOf("points") - 1);
+//            String st = highScore.substring(highScore.indexOf("-> ") + 3);
+////            st = st.substring(0, st.indexOf("points") - 2);
+            int savedScore = Integer.parseInt(highScore);
+            if (view.getEarnedPoints() > savedScore) {
+                editor.clear();
+                editor.apply();
+                writeScore(editor);
+            }
+        } else {
+            writeScore(editor);
+        }
+    }
+
+    private void writeScore(SharedPreferences.Editor editor) {
+        DateFormat format = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+        String str = format.format(new Date()) + "\n" + userName + "\n"
+                + String.valueOf(view.getEarnedPoints() +
+                " points\n" + gameDifficulty.toString() + " mode");
+        editor.putString(IntentConst.HIDHT_SCORE.name(), str);
+        editor.apply();
+        Toast.makeText(this, "New score saved", Toast.LENGTH_LONG).show();
     }
 }

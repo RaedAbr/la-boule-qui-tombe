@@ -1,18 +1,16 @@
 package hepia.app.game;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Handler;
-import android.widget.Toast;
+import android.view.LayoutInflater;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import hepia.app.R;
 import hepia.app.activities.GamePlayActivity;
 
 public class GameTimer {
@@ -56,7 +54,8 @@ public class GameTimer {
                         timeValueSeconds--;
                         activity.getView().setTime(timeValueSeconds);
                         if (timeValueSeconds <= 0) {
-                            displayDialog("Play again?");
+                            activity.saveScore();
+                            displayTimeOverDialog("Play again?");
                         }
                     }
                 });
@@ -64,9 +63,8 @@ public class GameTimer {
         };
     }
 
-    private void displayDialog(String msg) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                activity);
+    private void displayTimeOverDialog(String msg) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
 
         // set title
         alertDialogBuilder.setTitle("Time Over");

@@ -143,7 +143,7 @@ public class Ball {
     private void reboundToUp(float posX, float top) {
         updatePosX(posX);
 //        if (this.posX > top - ray) {
-        if (this.posX + ray < top + ray * 2) {
+        if (this.posX + ray < top + ray * 4) {
             this.posX = top - ray;
             this.speedX = -this.speedX / REBOUND;
         }
@@ -156,7 +156,7 @@ public class Ball {
 
     private void reboundToDown(float posX, float bottom) {
         updatePosX(posX);
-        if (this.posX - ray > bottom - ray * 2) {
+        if (this.posX - ray > bottom - ray * 4) {
             this.posX = bottom + ray;
             this.speedX = -this.speedX / REBOUND;
         }

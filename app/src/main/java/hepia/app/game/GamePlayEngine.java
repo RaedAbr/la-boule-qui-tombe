@@ -33,6 +33,11 @@ public class GamePlayEngine {
     private List<Block> blocks;
     private List<Integer> scoreValues;
     private Ball ball;
+
+    public int getEarnedPoints() {
+        return earnedPoints;
+    }
+
     private int earnedPoints = 0;
     private GamePlayActivity gamePlayActivity;
     private Random r = new Random();
