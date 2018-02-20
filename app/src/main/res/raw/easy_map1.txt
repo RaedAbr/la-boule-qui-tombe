@@ -1,0 +1,30 @@
+******************************
+*                            *
+*                            *
+*                            *
+*pppppppppppppppppppp    pppp*
+*                            *
+*                            *
+*                            *
+*   ppppppppppppp   pppppp   *
+*              w             *
+*              w             *
+*     b                      *
+*  ppppppppppp   pppppppp    *
+*                            *
+*                            *
+*               b            *
+*   p   pppppppppppppp   p   *
+*                            *
+* b                          *
+*                            *
+*   pppppppppp  pppppppppp   *
+*                            *
+*                            *
+*                            *
+*     ppppp   ppp   ppppp    *
+*              w             *
+*              w             *
+*   w  w  w  w  w  w  w  w   *
+*xxxwsswxxwsswxxwsswxxwsswxxx*
+******************************

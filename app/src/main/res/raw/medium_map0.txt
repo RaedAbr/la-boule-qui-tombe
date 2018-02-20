@@ -5,7 +5,7 @@
 *ppppppp   pppppppppp    pppp*
 *                            *
 *                            *
-*       b              b     *
+*       b              m     *
 *   ppppppppppppp   pppppp   *
 *       w                    *
 *       w                    *
@@ -13,11 +13,11 @@
 *  ppppppppppp   pppppppppppp*
 *                            *
 *                            *
-*             m              *
+*m              b            *
 *pppppp   pppppppppppp   pp  *
 *                 w          *
+*    m            w     b m  *
 *                 w          *
-*                 w     m    *
 *   pppppppppp  ppppppppppp  *
 *                            *
 *                            *

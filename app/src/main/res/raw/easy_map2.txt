@@ -2,29 +2,29 @@
 *                            *
 *                            *
 *                            *
-*ppppppp   pppppppppp    pppp*
+*ppppppppppp    ppppppppppppp*
 *                            *
 *                            *
 *                            *
-*                   w        *
-*       w           w        *
-*       w           w        *
-*       w           w        *
+*   pppp   pppppp   pppppp   *
+*                            *
+*   b                        *
+*                            *
+*  pppppppppppppppppppppp    *
+*         w                  *
+*         w                  *
+*         w     b            *
+*  pppp   pppp   ppppp   pp  *
+*                            *
+*     b                      *
+*                            *
+*  ppp  pp  pp  ppp  pp  pp  *
 *                            *
 *                            *
 *                            *
-*                            *
-*pppppp                  pp  *
-*                            *
+*   p  p  p  p  p  p  p  p   *
 *                            *
 *                            *
-*   ppp                      *
-*                            *
-*                            *
-*                            *
-*     ppppp   ppp   ppppp    *
-*                            *
-*                            *
-*                            *
-*                            *
+*   w  w  w  w  w  w  w  w   *
+*xxxwsswxxwsswxxwsswxxwsswxxx*
 ******************************

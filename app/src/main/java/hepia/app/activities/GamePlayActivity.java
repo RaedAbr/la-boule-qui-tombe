@@ -60,16 +60,17 @@ public class GamePlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        view = new GamePlayView(this);
-        setContentView(view);
-
-        this.engine = new GamePlayEngine(this);
         // Calcul de la taille d'un bloc par rapport à 30 blocs par ligne
         Display display = getWindowManager().getDefaultDisplay();
         Point dim = new Point();
         display.getSize(dim);
         int width = dim.x;
-        int size = (width / BLOCKINLINE);
+        int blockSize = (width / BLOCKINLINE);
+
+        view = new GamePlayView(this, blockSize, width);
+        setContentView(view);
+
+        this.engine = new GamePlayEngine(this, blockSize);
 
         // récupérer le niveau de jeu de l'avtivité précédente
         Intent intent = getIntent();
@@ -79,12 +80,12 @@ public class GamePlayActivity extends AppCompatActivity {
 
         view.setUserName(userName);
 
-        Ball ball = new Ball(size / 2, gameDifficulty);
+        Ball ball = new Ball(blockSize / 2, gameDifficulty);
         view.setBall(ball);
         engine.setBall(ball);
 
         // consruction de la grille et des points de score à gagner
-        List<Block> blocks = engine.buildMap(size);
+        List<Block> blocks = engine.buildMap(blockSize);
         view.setBlocks(blocks);
         view.setScores(engine.getScoreValues());
 

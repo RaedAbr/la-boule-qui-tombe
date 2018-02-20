@@ -41,8 +41,10 @@ public class GamePlayEngine {
     private int earnedPoints = 0;
     private GamePlayActivity gamePlayActivity;
     private Random r = new Random();
+    private int size;
 
-    public GamePlayEngine(final GamePlayActivity gamePlayActivity) {
+    public GamePlayEngine(final GamePlayActivity gamePlayActivity, int size) {
+        this.size = size;
         sensorManager = (SensorManager) gamePlayActivity.getBaseContext().getSystemService(Service.SENSOR_SERVICE);
         assert sensorManager != null;
         accelerometre = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -104,7 +106,7 @@ public class GamePlayEngine {
                             ball.manageCollision(blockInCollision, inter2);
                         }
                     } else {
-                        ball.updateXY(y, blocks);
+                        ball.updateXY(y);
                     }
                     ball.updateContainerPos();
                 }
@@ -132,7 +134,9 @@ public class GamePlayEngine {
     public void reset() {
         earnedPoints = 0;
         gamePlayActivity.getView().resetEaernedPoints();
-        ball.reset();
+//        ball.reset();
+        blocks = buildMap(size);
+        gamePlayActivity.getView().setBlocks(blocks);
         updateScoreBlocks();
         gamePlayActivity.getView().setScores(scoreValues);
         resume();
@@ -153,7 +157,7 @@ public class GamePlayEngine {
         buildScores();
 
         blocks = new ArrayList<>();
-        List<String> map = readMap(this.gamePlayActivity);
+        List<String> map = readMap(gamePlayActivity);
         int y = 0;
         for (String str: map) {
             int x = 0;
@@ -210,8 +214,9 @@ public class GamePlayEngine {
     }
 
     private List<String> readMap(Activity activity) {
+        int randomMap = selectRandomMap();
         List<String> map = new ArrayList<>();
-        InputStream inputStream = activity.getResources().openRawResource(R.raw.fichier);
+        InputStream inputStream = activity.getResources().openRawResource(randomMap);
         try {
             if (inputStream != null) {
                 // open a reader on the inputStream
@@ -232,6 +237,40 @@ public class GamePlayEngine {
             Toast.makeText(activity, "FileNotFoundException", Toast.LENGTH_LONG).show();
         }
         return map;
+    }
+
+    private int selectRandomMap() {
+        int x = r.nextInt(3);
+        switch (gamePlayActivity.getGameDifficulty()) {
+            case EASY:
+                switch (x) {
+                    case 0:
+                        return R.raw.easy_map0;
+                    case 1:
+                        return R.raw.easy_map1;
+                    case 2:
+                        return R.raw.easy_map2;
+                }
+            case MEDIUM:
+                switch (x) {
+                    case 0:
+                        return R.raw.medium_map0;
+                    case 1:
+                        return R.raw.medium_map1;
+                    case 2:
+                        return R.raw.medium_map2;
+                }
+            case HARD:
+                switch (x) {
+                    case 0:
+                        return R.raw.hard_map0;
+                    case 1:
+                        return R.raw.hard_map1;
+                    case 2:
+                        return R.raw.hard_map2;
+                }
+        }
+        return 0;
     }
 
     public void setBall(Ball ball) {

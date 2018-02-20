@@ -7,16 +7,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.view.View;
 
 import java.util.List;
+import java.util.Random;
 
 import hepia.app.R;
 import hepia.app.model.Ball;
 import hepia.app.model.Block;
-import hepia.app.model.ScoreBlock;
 
 import static hepia.app.activities.GamePlayActivity.BLOCKINLINE;
 
@@ -26,11 +27,18 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
     private final Bitmap malusBitmap;
     private final Bitmap bonusBitmap;
     private final Bitmap ballBitmap;
+    private final Bitmap background1Bitmap;
+    private final RectF mapRectF;
+    private final Bitmap background0Bitmap;
+    private final Bitmap background2Bitmap;
     private DrawingThread drawingThread;
     private Paint paint;
     private List<Block> blocks;
     private List<Integer> scores;
     private Ball ball;
+
+    Random r = new Random();
+    private Bitmap selectedBitmap;
 
     public int getEarnedPoints() {
         return earnedPoints;
@@ -54,7 +62,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
         this.earnedPoints += earnedPoints;
     }
 
-    public GamePlayView(Context context) {
+    public GamePlayView(Context context, int blockSize, int mapSize) {
         super(context);
 //        this.surfaceHolder = this.getHolder();
         this.surfaceHolder.addCallback(this);
@@ -70,12 +78,18 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
         bonusBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.plus5);
         malusBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.minuis5);
         ballBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ball);
+        background0Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.background0);
+        background1Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.background1);
+        background2Bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.background2);
+        selectedBitmap = background0Bitmap;
+        mapRectF = new RectF(blockSize, blockSize, mapSize - blockSize, mapSize - blockSize);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         // Dessiner le fond de l'�cran en premier
         canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(selectedBitmap, null, mapRectF, paint);
         paint.setTextAlign(Paint.Align.LEFT);
         float size = 0;
         if (blocks != null) {
@@ -123,7 +137,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
             }
             if (scores != null) {
                 paint.setTextSize(40);
-                paint.setColor(Color.BLACK);
+                paint.setColor(Color.WHITE);
                 int i = 0;
                 for (int sc : scores) {
                     String str;
@@ -131,7 +145,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
                         str = "0" + Integer.toString(sc);
                     else
                         str = Integer.toString(sc);
-                    canvas.drawText(str, size * 5 + (6 * i * size), size * 29 - 5, paint);
+                    canvas.drawText(str, size * 5 + (6 * i * size) + 2, size * 29 - 5, paint);
                     i++;
                 }
             }
@@ -212,6 +226,18 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
     }
 
     public void restartDraw() {
+        int x = r.nextInt(3);
+        selectedBitmap = null;
+        switch (x) {
+            case 0:
+                selectedBitmap = background0Bitmap;
+                break;
+            case 1:
+                selectedBitmap = background1Bitmap;
+                break;
+            default: selectedBitmap = background2Bitmap;
+                break;
+        }
         drawingThread = new DrawingThread();
         drawingThread.keepDrawing = true;
         drawingThread.start();

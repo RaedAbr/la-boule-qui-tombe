@@ -193,7 +193,7 @@ public class Ball {
         this.container = container;
     }
 
-    public void updateXY(float y, List<Block> blocks) {
+    public void updateXY(float y) {
 //        speedX += x / COMPENSATOR;
 //        Log.d(TAG, "updateXY: max: " + x);
 //        if (x < 0) {
@@ -256,16 +256,4 @@ public class Ball {
         this.posY = initialContainer.left + ray;
         this.posX = initialContainer.top + ray;
     }
-
-    //    public void moveDown(int dy) {
-//        position.posX += dy;
-//    }
-//
-//    public void moveLeft(int dx) {
-//        position.posX += dx;
-//    }
-//
-//    public void moveRight(int dx) {
-//        position.posX -= dx;
-//    }
 }
