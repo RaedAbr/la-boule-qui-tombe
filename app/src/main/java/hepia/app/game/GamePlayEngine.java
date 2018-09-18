@@ -34,10 +34,6 @@ public class GamePlayEngine {
     private List<Integer> scoreValues;
     private Ball ball;
 
-    public int getEarnedPoints() {
-        return earnedPoints;
-    }
-
     private int earnedPoints = 0;
     private GamePlayActivity gamePlayActivity;
     private Random r = new Random();
@@ -134,7 +130,6 @@ public class GamePlayEngine {
     public void reset() {
         earnedPoints = 0;
         gamePlayActivity.getView().resetEaernedPoints();
-//        ball.reset();
         blocks = buildMap(size);
         gamePlayActivity.getView().setBlocks(blocks);
         updateScoreBlocks();
@@ -142,12 +137,12 @@ public class GamePlayEngine {
         resume();
     }
 
-    // Arr�te le capteur
+    // Arrete le capteur
     public void stop() {
         sensorManager.unregisterListener(sensorEventListener, accelerometre);
     }
 
-    // Red�marre le capteur
+    // Redémarre le capteur
     public void resume() {
         sensorManager.registerListener(sensorEventListener, accelerometre, SensorManager.SENSOR_DELAY_GAME);
     }
@@ -177,8 +172,6 @@ public class GamePlayEngine {
                         blocks.add(new EmptyScoreBlock(x, y, rayon));
                         break;
                     case 's':
-//                        int val = i / 2;
-//                        if (i % 2 = 1)
                         blocks.add(new ScoreBlock(x, y, rayon, scoreValues.get(i / 2)));
                         i++;
                     default:
@@ -194,19 +187,14 @@ public class GamePlayEngine {
             }
             y++;
         }
-//
+
         // initial ball container
         Block block = new Block(Block.Type.NULL, 2, 2, rayon);
         ball.setInitialContainer(new RectF(block.getRectangle()));
-
-//        blocks.add(block);
-//
-//        blocks.add(new Block(Block.Type.ARRIVAL, 8, 11, rayon));
-
         return blocks;
     }
 
-    public void buildScores() {
+    private void buildScores() {
         scoreValues = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             scoreValues.add(r.nextInt(10) * 10);

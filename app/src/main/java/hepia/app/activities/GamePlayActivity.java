@@ -1,27 +1,21 @@
 package hepia.app.activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import hepia.app.R;
 import hepia.app.game.GamePlayEngine;
@@ -29,9 +23,9 @@ import hepia.app.game.GamePlayView;
 import hepia.app.game.GameTimer;
 import hepia.app.model.Ball;
 import hepia.app.model.Block;
-import hepia.app.resources.PauseDialogView;
 import hepia.app.resources.GameDifficulty;
 import hepia.app.resources.IntentConst;
+import hepia.app.resources.PauseDialogView;
 
 public class GamePlayActivity extends AppCompatActivity {
     public static final int BLOCKINLINE = 30;
@@ -45,10 +39,6 @@ public class GamePlayActivity extends AppCompatActivity {
     private GamePlayView view;
     private GameDifficulty gameDifficulty;
     private String userName;
-
-    public String getUserName() {
-        return userName;
-    }
 
     public GameTimer getGameTimer() {
         return gameTimer;
@@ -90,7 +80,6 @@ public class GamePlayActivity extends AppCompatActivity {
         view.setScores(engine.getScoreValues());
 
         gameTimer = new GameTimer(this);
-//        gameTimer.startTimer();
     }
 
     public GameDifficulty getGameDifficulty() {
@@ -134,7 +123,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         displayDialog();
     }
 
@@ -149,10 +137,6 @@ public class GamePlayActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, close
-                        // current activity
-//                                            MainActivity.this.finish();
-//                        resetGame();
                         GamePlayActivity.super.onBackPressed();
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -186,12 +170,6 @@ public class GamePlayActivity extends AppCompatActivity {
         pauseGame();
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        pauseGame();
-//    }
-
     public void pauseGame() {
         engine.stop();
         view.stop();
@@ -219,8 +197,6 @@ public class GamePlayActivity extends AppCompatActivity {
             highScore = highScore.substring(highScore.indexOf('\n') + 1);
             highScore = highScore.substring(highScore.indexOf('\n'));
             highScore = highScore.substring(highScore.indexOf('\n') + 1, highScore.indexOf("points") - 1);
-//            String st = highScore.substring(highScore.indexOf("-> ") + 3);
-////            st = st.substring(0, st.indexOf("points") - 2);
             int savedScore = Integer.parseInt(highScore);
             if (view.getEarnedPoints() > savedScore) {
                 editor.clear();

@@ -77,7 +77,6 @@ public class GameTimer {
                     public void onClick(DialogInterface dialog,int id) {
                         // if this button is clicked, close
                         // current activity
-//                                            MainActivity.this.finish();
                         activity.resetGame();
                     }
                 })
@@ -96,10 +95,6 @@ public class GameTimer {
         // show it
         alertDialog.show();
         activity.pauseGame();
-    }
-
-    public int getTimeValueSeconds() {
-        return timeValueSeconds;
     }
 
     public void setTimeValueSeconds(int timeValueSeconds) {

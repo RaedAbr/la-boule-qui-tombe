@@ -64,7 +64,6 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     public GamePlayView(Context context, int blockSize, int mapSize) {
         super(context);
-//        this.surfaceHolder = this.getHolder();
         this.surfaceHolder.addCallback(this);
         drawingThread = new DrawingThread();
 
@@ -87,7 +86,7 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // Dessiner le fond de l'�cran en premier
+        // Dessiner le fond de l'écran en premier
         canvas.drawColor(Color.WHITE);
         canvas.drawBitmap(selectedBitmap, null, mapRectF, paint);
         paint.setTextAlign(Paint.Align.LEFT);
@@ -100,36 +99,18 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
                     switch (b.getType()) {
                         case V_OBSTACLE:
                         case H_OBSTACLE:
-//                            paint.setColor(Color.BLUE);
-//                            canvas.drawRect(b.getRectangle(), paint);
                             canvas.drawBitmap(wallBitmap, null, b.getRectangle(), paint);
                             break;
-//                            paint.setColor(Color.BLUE);
-//                            canvas.drawRect(b.getRectangle(), paint);
-//                            break;
-                        //                    case ARRIVAL:
-                        //                        paint.setColor(Color.RED);
-                        //                        canvas.drawRect(b.getRectangle(), paint);
-                        //                        break;
                         case BORDER:
-//                            paint.setColor(Color.BLACK);
-//                            canvas.drawRect(b.getRectangle(), paint);
                             canvas.drawBitmap(borderBitmap, null, b.getRectangle(), paint);
                             break;
                         case SCORE_BLOCK:
                         case EMPTY_SCORE_BLOCK:
-//                            paint.setColor(Color.RED);
-//                            paint.setTextSize(20);
-//                            canvas.drawText(Integer.toString(((ScoreBlock) b).getValue()), b.getRectangle().centerX(), b.getRectangle().centerY(), paint);
                             break;
                         case MALUS:
-//                            paint.setColor(Color.RED);
-//                            canvas.drawRect(b.getRectangle(), paint);
                             canvas.drawBitmap(malusBitmap, null, b.getRectangle(), paint);
                             break;
                         case BONUS:
-//                            paint.setColor(Color.GREEN);
-//                            canvas.drawRect(b.getRectangle(), paint);
                             canvas.drawBitmap(bonusBitmap, null, b.getRectangle(), paint);
                             break;
                     }
@@ -152,10 +133,6 @@ public class GamePlayView extends SurfaceView implements SurfaceHolder.Callback 
         }
         // Dessiner la boule
         if (ball != null) {
-//            paint.setColor(Color.GRAY);
-//            canvas.drawRect(ball.getContainer(), paint);
-//            paint.setColor(ball.getColor());
-//            canvas.drawCircle(ball.getPosY(), ball.getPosX(), ball.getRay(), paint);
             canvas.drawBitmap(ballBitmap, null, ball.getContainer(), paint);
         }
 

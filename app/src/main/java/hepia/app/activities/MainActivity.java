@@ -1,36 +1,23 @@
 package hepia.app.activities;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import hepia.app.R;
 import hepia.app.resources.GameDifficulty;
 import hepia.app.resources.IntentConst;
-import hepia.app.R;
 
 public class MainActivity extends AppCompatActivity {
     private Menu gameMenu;
@@ -47,10 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         difficultyOption = GameDifficulty.EASY;
         userNameEditText = findViewById(R.id.user_name);
-
-//        Bitmap mainBackground = BitmapFactory.decodeResource(getResources(), R.mipmap.main);
-//        LinearLayout ll = findViewById(R.id.main_layout);
-//        ll.setbi
     }
 
     /**

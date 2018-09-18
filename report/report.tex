@@ -21,24 +21,28 @@
 
 \begin{document}
 
-\title{Petits comptes entre amis} 
+\title{La boule qui tombe... qui tombe...} 
 \author{Raed Abdennadher} 
-\affil{\small Développement web - Prof Stephane Malandain} 
+\affil{\small Développement mobile android - Prof Stephane Malandain} 
 \affil{\small Hepia ITI 3\up{ème} année} 
 \maketitle
 
 \section{Introduction}
-\subsection{Description}
-Le but de ce mini-projet est de réaliser un site web en php qui permet de gérer un évènement entre amis. Il permet de créer des évènements, ajouter des dépenses, et calculer le balance et l'équilibre. Le projet est disponible sur \url{https://github.com/RaedAbr/friends-trip.git}
-
-\subsection{Fonctionnalités offertes}
-Notre site web permet de :
+Le but de ce tp est de réaliser un jeu android :
 \begin{itemize}
-	\item Créer un utilisateur.
-	\item Créer un évènement en choisissant les utilisateurs participants et le poids de chacun entre eux.
-	\item Ajouter une dépense en choisissant les utilisateurs concernés.
-	\item Pour un évènement donné, afficher le balance du groupe et comment arriver à équilibrer la situation.
-	\item Pour un évènement donné, afficher la liste des dépenses ainsi que les utilisateurs concernés.
+	\item L'objectif du jeu est de gagner le plus de points possible.
+	\item Une boule apparaît en haut de l’écran et commence à tomber sous l'éffet de la gravité tant qu'il n'y a pas
+	de plateformes horizontaux qui s'opposent à son mouvement vertical (du haut vers le bas). A noter que la masse
+	de la boule est variable selon le mode du jeu. Par exemple, dans le mode facile, la boule est relativement
+	légère, et donc sa vitesse de chute est relativement moins rapide que celle dans le mode difficile.
+	\item Dans les plateformes il y a des trous à travers desquels la boule peut tomber.
+	\item En commençant une partie, un timer se lance. Il faut que la boule arrive en bas de l'écran avant que
+	le temps échu.
+	\item Sur l'espace du jeu, il y a des bonus et des malus (selon la difficulté du jeu) : un bonus (en verts)
+	ajoute 5 secondes au timer, alos qu'un malus (en rouge) enlève 5 secondes du timer. Quand l'utilisateur choisit
+	le mode facile, il y aura que des bonus dans le jeu. Pour le mode intermédière il y a des bonus et des malus.
+	Dans le mode difficile, il y a que des malus.
+	\item En bas de l'écran, il y a des cases. Chaque case contient un nombre de points différent et aléatoire.
 \end{itemize}
 
 \section{Architecture du projet}
